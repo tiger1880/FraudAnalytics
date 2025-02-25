@@ -60,12 +60,20 @@ class Pregel():
 
     def redistribute_messages(self):
         """Updates the message lists for all vertices."""
+        # Create a mapping from vertex ID to TrustRankVertex object
+        vertex_map = {v.id: v for v in self.vertices}
         for vertex in self.vertices:
             vertex.superstep +=1
             vertex.incoming_messages = []
         for vertex in self.vertices:
-            for (receiving_vertix,message) in vertex.outgoing_messages:
-                receiving_vertix.incoming_messages.append((vertex,message))
+            for (receiving_vertex_id, message) in vertex.outgoing_messages:
+                if receiving_vertex_id in vertex_map:
+                    receiving_vertex = vertex_map[receiving_vertex_id]
+                    receiving_vertex.incoming_messages.append((vertex.id, message))
+        
+        # for vertex in self.vertices:
+        #     for (receiving_vertix,message) in vertex.outgoing_messages:
+        #         receiving_vertix.incoming_messages.append((vertex,message))
 
     def check_active(self):
         """Returns True if there are any active vertices, and False
