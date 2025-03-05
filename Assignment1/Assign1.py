@@ -123,7 +123,7 @@ if __name__ == '__main__':
     plt.hist(trust_values, bins='auto', edgecolor='black', alpha=0.7)
     plt.xlabel('Value Range')
     plt.ylabel('Frequency')
-    plt.title('Histogram with Zeros')
+    plt.title('Histogram of Trust Values')
 
    
     plt.savefig('Histogram.png')
