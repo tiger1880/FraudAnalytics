@@ -7,6 +7,16 @@ import threading
 class Vertex():
 
     def __init__(self,id,value,out_vertices):
+        # This is mostly self-explanatory, but has a few quirks:
+        #
+        # self.id is included mainly because it's described in the
+        # Pregel paper.  It is used briefly in the pagerank example,
+        # but not in any essential way, and I was tempted to omit it.
+        #
+        # Each vertex stores the current superstep number in
+        # self.superstep.  It's arguably not wise to store many copies
+        # of global state in instance variables, but Pregel's
+        # synchronous nature lets us get away with it.
         self.id = id 
         self.value = value
         self.out_vertices = out_vertices
@@ -60,20 +70,12 @@ class Pregel():
 
     def redistribute_messages(self):
         """Updates the message lists for all vertices."""
-        # Create a mapping from vertex ID to TrustRankVertex object
-        vertex_map = {v.id: v for v in self.vertices}
         for vertex in self.vertices:
             vertex.superstep +=1
             vertex.incoming_messages = []
         for vertex in self.vertices:
-            for (receiving_vertex_id, message) in vertex.outgoing_messages:
-                if receiving_vertex_id in vertex_map:
-                    receiving_vertex = vertex_map[receiving_vertex_id]
-                    receiving_vertex.incoming_messages.append((vertex.id, message))
-        
-        # for vertex in self.vertices:
-        #     for (receiving_vertix,message) in vertex.outgoing_messages:
-        #         receiving_vertix.incoming_messages.append((vertex,message))
+            for (receiving_vertix,message) in vertex.outgoing_messages:
+                receiving_vertix.incoming_messages.append((vertex,message))
 
     def check_active(self):
         """Returns True if there are any active vertices, and False
