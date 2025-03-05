@@ -15,16 +15,18 @@ class TrustRankVertex(pregel.Vertex):
         out_vertices = []
         if vertex_id in outgoing_edges:
             out_vertices = outgoing_edges[vertex_id]
-        
-        super().__init__(vertex_id, 0, list(out_vertices))
-
-        self.damping_factor = damping_factor
-        self.max_iterations = max_iterations
+            
         if vertex_id in outgoing_edges:
             self.outgoing_edges = outgoing_edges[vertex_id]
         else:
             self.outgoing_edges = []
+        
+        super().__init__(vertex_id, 0, list(out_vertices))
 
+        self.damping_factor = damping_factor # alpha
+        self.max_iterations = max_iterations 
+        
+        # initialize the trust value of bad senders to 1/(no. of bad senders) and others to 0
         if vertex_id in bad_sender_list:
             self.bad_node = True
             self.value = 1/len(bad_sender_list)
@@ -33,11 +35,10 @@ class TrustRankVertex(pregel.Vertex):
             self.value = 0
 
         self.out_deg = 0
-
-        self.out_deg = sum(amount for _, amount in out_vertices)
+        self.out_deg = sum(amount for _, amount in out_vertices) # out degree is the sum of amounts of outgoing edges
             
-        self.const_value = self.value
-        self.vertex_objs = vertex_objs
+        self.const_value = self.value # initial value
+        self.vertex_objs = vertex_objs # dictionary of vertex objects needed for sending messages
 
     def update(self):
         if self.superstep < self.max_iterations:
