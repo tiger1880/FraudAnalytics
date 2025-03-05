@@ -89,7 +89,7 @@ if __name__ == '__main__':
         if node_id in vertex_objs:
             vertices.append(vertex_objs[node_id])
         else:
-            vertex_objs[node_id] = TrustRankVertex(node_id, bad_sender_list, outgoing_edges, vertex_objs, 0.85, 50)
+            vertex_objs[node_id] = TrustRankVertex(node_id, bad_sender_list, outgoing_edges, vertex_objs, 0.85, 50) # alpha and 50 same for all nodes
             vertices.append(vertex_objs[node_id])
             
     # Run the Pregel algorithm
@@ -108,7 +108,7 @@ if __name__ == '__main__':
 
     # Save the trust values to an Excel file
     df = pd.DataFrame(df)
-    df.to_excel('TrustValuesResults.xlsx', index=False)
+    df.to_excel('TrustValuesResult.xlsx', index=False)
     
 
     print("\n\n\n")
